@@ -12,7 +12,7 @@ Installation
 ============
 
 .. code-block:: bash
-   pip install unicef-validator
+   pip install etools-validator
 
 
 Setup
