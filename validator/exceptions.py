@@ -5,6 +5,8 @@ from __future__ import unicode_literals
 
 from django.utils.encoding import python_2_unicode_compatible
 
+from validator.utils import _unicode_if
+
 
 @python_2_unicode_compatible
 class _BaseStateError(BaseException):
@@ -20,7 +22,7 @@ class _BaseStateError(BaseException):
 
     def __str__(self):
         # There's only 1 arg, and it must be a list of messages.
-        return u'\n'.join([msg.decode("utf-8") for msg in self.args[0]])
+        return u'\n'.join([_unicode_if(msg) for msg in self.args[0]])
 
 
 class TransitionError(_BaseStateError):
