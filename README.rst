@@ -4,8 +4,9 @@ Validator
 Validator is a library that provides an improved handling of validation.
 
 The following parts of validation are handled;
-- state
-- transistion
+
+    - state
+    - transistion
 
 
 Installation
@@ -18,7 +19,7 @@ Installation
 Setup
 =====
 
-Add `validator` to `INSTALLED_APPS` in `settings.py`
+Add ``validator`` to ``INSTALLED_APPS`` in ``settings.py``
 
 .. code-block:: python
    INSTALLED_APPS = [
@@ -30,7 +31,7 @@ Add `validator` to `INSTALLED_APPS` in `settings.py`
 Usage
 =====
 
-Use `validator` in views
+Use ``validator`` in views
 
 ..  code-block:: python
    from validator.mixins import ValidatorViewMixin
