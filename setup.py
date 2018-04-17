@@ -2,8 +2,10 @@
 
 import os
 import codecs
+import sys
 
 from setuptools import setup, find_packages
+from setuptools.command.install import install
 
 VERSION = __import__('validator').get_version()
 HERE = os.path.dirname(__file__)
@@ -16,6 +18,18 @@ def read(*files):
     return content
 
 
+class VerifyTagVersion(install):
+    """Verify that the git tag matches version"""
+    def run(self):
+        tag = os.getenv("CIRCLE_TAG")
+        if tag != VERSION:
+            info = "Git tag: {} does not match the version of this app: {}".format(
+                tag,
+                VERSION
+            )
+            sys.exit(info)
+
+
 setup(
     name='validator',
     url='https://github.com/unicef/validator',
@@ -25,7 +39,7 @@ setup(
     version=VERSION,
     long_description=read('README.rst'),
     platforms=['any'],
-    license='MIT License',
+    license='Apache 2 License',
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
@@ -43,4 +57,5 @@ setup(
         'validator': ['validator/*'],
     },
     install_requires=read("requirements/base.txt"),
+    cmdclass={"verify": VerifyTagVersion}
 )
