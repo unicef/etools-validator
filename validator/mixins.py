@@ -1,10 +1,4 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from django.db.models import ObjectDoesNotExist
-from django.utils import six
 
 from rest_framework.exceptions import ValidationError
 
@@ -134,7 +128,7 @@ class ValidatorViewMixin(object):
 
         main_object = main_serializer.save()
 
-        for k, v in six.iteritems(my_relations):
+        for k, v in my_relations.items():
             self.up_related_field(
                 main_object,
                 v,
@@ -174,7 +168,7 @@ class ValidatorViewMixin(object):
 
         main_object = main_serializer.save()
 
-        for k in six.iterkeys(my_relations):
+        for k in my_relations.keys():
             try:
                 rel_field_val = getattr(old_instance, k)
             except ObjectDoesNotExist:
@@ -190,7 +184,7 @@ class ValidatorViewMixin(object):
 
                 setattr(old_instance, prop, val)
 
-        for k, v in six.iteritems(my_relations):
+        for k, v in my_relations.items():
             self.up_related_field(
                 main_object,
                 v,

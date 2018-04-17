@@ -1,11 +1,4 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from unittest import TestCase
-
-from django.utils import six
 
 from validator.exceptions import (
     _BaseStateError,
@@ -24,10 +17,10 @@ class TestExceptions(TestCase):
     def test_basic_validation_error(self):
         '''Exercise converting BasicValidationError to string'''
         e = BasicValidationError()
-        self.assertEqual(six.text_type(e), '')
+        self.assertEqual(str(e), '')
 
         e = BasicValidationError('hello world')
-        self.assertEqual(six.text_type(e), 'hello world')
+        self.assertEqual(str(e), 'hello world')
 
     def test_state_valid_error(self):
         '''Ensure StateValidError inherits from _BaseStateError'''
@@ -40,10 +33,10 @@ class TestExceptions(TestCase):
     def test_base_state_error_stringification(self):
         '''Exercise converting _BaseStateError to a string'''
         e = _BaseStateError()
-        self.assertEqual(six.text_type(e), '')
+        self.assertEqual(str(e), '')
 
         e = _BaseStateError(['hello world'])
-        self.assertEqual(six.text_type(e), 'hello world')
+        self.assertEqual(str(e), 'hello world')
 
         # Test non-ASCII unicode in the params
         e = _BaseStateError([
@@ -53,7 +46,7 @@ class TestExceptions(TestCase):
             u'l\xf6rem ipsum'
         ])
         self.assertEqual(
-            six.text_type(e),
+            str(e),
             u'hello world\ngoodbye world\nl\xf6rem ipsum\nl\xf6rem ipsum'
         )
 

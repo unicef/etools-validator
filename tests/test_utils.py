@@ -1,11 +1,4 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from unittest import TestCase
-
-from django.utils import six
 
 from demo.sample import models
 
@@ -16,7 +9,7 @@ class TestGetAllFieldNames(TestCase):
     def test_many(self):
         m = models.DemoModel()
         fields = utils.get_all_field_names(m)
-        six.assertCountEqual(self, fields, [
+        self.assertCountEqual(fields, [
             "id",
             "name",
             "description",
@@ -27,7 +20,7 @@ class TestGetAllFieldNames(TestCase):
     def test_related(self):
         m = models.DemoChildModel()
         fields = utils.get_all_field_names(m)
-        six.assertCountEqual(self, fields, [
+        self.assertCountEqual(fields, [
             "id",
             "name",
             "parent",

@@ -1,13 +1,7 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import copy
 import logging
 
 from django.apps import apps
-from django.utils import six
 from django.utils.functional import cached_property
 from django_fsm import (
     can_proceed,
@@ -25,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def update_object(obj, kwdict):
-    for k, v in six.iteritems(kwdict):
+    for k, v in kwdict.items():
         setattr(obj, k, v)
 
 

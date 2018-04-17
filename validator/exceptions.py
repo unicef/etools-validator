@@ -1,14 +1,6 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
-from django.utils.encoding import python_2_unicode_compatible
-
 from validator.utils import _unicode_if
 
 
-@python_2_unicode_compatible
 class _BaseStateError(BaseException):
     '''Base class for state-related exceptions.
     Accepts only one param which must be a list of strings.'''
