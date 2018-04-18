@@ -42,16 +42,19 @@ class CompleteValidation(object):
             )
 
         if isinstance(new, dict):
-            if not old and not instance_class:
-                try:
-                    instance_class = apps.get_model(
-                        getattr(self, 'VALIDATION_CLASS')
-                    )
-                except LookupError:
-                    raise TypeError(
-                        'Object transmitted for validation cannot '
-                        'be dict if instance_class is not defined'
-                    )
+            if not instance_class:
+                if old:
+                    instance_class = type(old)
+                else:
+                    try:
+                        instance_class = apps.get_model(
+                            getattr(self, 'VALIDATION_CLASS')
+                        )
+                    except LookupError:
+                        raise TypeError(
+                            'Object transmitted for validation cannot '
+                            'be dict if instance_class is not defined'
+                        )
             new_id = new.get('id', None) or new.get('pk', None)
             if new_id:
                 # let it raise the error if it does not exist
@@ -76,17 +79,15 @@ class CompleteValidation(object):
 
         self.stateless = stateless
         self.new = new
-        if not self.stateless:
-            self.new_status = self.new.status
-        self.skip_transition = not old
-        self.skip_permissions = not user
-
         # TODO: on old for related fields add the _old values in order to check
         # for rigid fields if validator was not called through the view using
         # the viewmixin
         self.old = old
         if not self.stateless:
+            self.new_status = self.new.status
             self.old_status = self.old.status if self.old else None
+        self.skip_transition = not old
+        self.skip_permissions = not user
         self.user = user
 
         # permissions to be set in each function that is needed, this attribute

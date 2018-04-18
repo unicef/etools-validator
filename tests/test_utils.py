@@ -14,6 +14,7 @@ class TestGetAllFieldNames(TestCase):
             "name",
             "description",
             "document",
+            "status",
             "children",
         ])
 
