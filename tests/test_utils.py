@@ -121,3 +121,33 @@ class TestFieldComparison(TestCase):
         m1 = models.DemoModel(document="sample1.pdf")
         m2 = models.DemoModel(document="sample2.pdf")
         self.assertFalse(utils.field_comparison(m1.document, m2.document))
+
+
+class TestCheckRigidRelated(TestCase):
+    def test_old_is_none(self):
+        """Old instance attribute does not have the related field set
+        as <field>_old
+        """
+        parent = models.DemoModel(name="parent")
+        models.DemoChildModel(name="child", parent=parent)
+        new = models.DemoModel(name="new parent")
+        new.old_instance = parent
+        self.assertTrue(utils.check_rigid_related(new, "children"))
+
+    def test_related_different(self):
+        """Count on old related field differs with current model"""
+        parent1 = models.DemoModel(name="parent1")
+        child1 = models.DemoChildModel(name="child1", parent=parent1)
+        parent2 = models.DemoModel(name="parent2")
+        parent1.children_old = [child1]
+        parent2.old_instance = parent1
+        self.assertFalse(utils.check_rigid_related(parent2, "children"))
+
+    def test_related_current_empty(self):
+        """Count on old related field matches, and current is empty"""
+        parent1 = models.DemoModel(name="parent1")
+        models.DemoChildModel(name="child1", parent=parent1)
+        parent2 = models.DemoModel(name="parent2")
+        parent1.children_old = []
+        parent2.old_instance = parent1
+        self.assertTrue(utils.check_rigid_related(parent2, "children"))
