@@ -124,21 +124,6 @@ def check_rigid_fields(obj, fields, old_instance=None, related=False):
     return True, None
 
 
-def _unicode_if(s):
-    '''Given a string (str or unicode), always returns a unicode version of
-    that string, converting it if necessary.
-
-    This function is Python 2- and 3-compatible.
-    '''
-    # Under Python 2, we can use isinstance(s, unicode),
-    # but that syntax doesn't work under Python 3 because the
-    # unicode type doesn't exist (only str which is Unicode by default).
-    # Instead I rely on the quirk that Python 2
-    # str instances lack a method (.isnumeric()) that exists on Python 2
-    # unicode instances and Python 3 str instances.
-    return s if hasattr(s, 'isnumeric') else s.decode('utf-8')
-
-
 def update_object(obj, kwdict):
     for k, v in kwdict.items():
         setattr(obj, k, v)
