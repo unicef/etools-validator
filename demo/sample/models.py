@@ -15,6 +15,9 @@ class DemoModel(models.Model):
     document = models.FileField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
 
+    def permission_structure(self):
+        return None
+
 
 class DemoChildModel(models.Model):
     name = models.CharField(max_length=50)

@@ -1,7 +1,8 @@
 from unittest import TestCase
 
 from demo.sample.models import DemoModel
-from demo.sample.permissions import DemoModelValidation
+from demo.sample.validation import DemoModelValidation
+from demo.sample.permissions import DemoModelPermissions
 
 from validator.validation import CompleteValidation
 from tests.factories import DemoModelFactory
@@ -117,3 +118,19 @@ class TestCompleteValidation(TestCase):
         )
         self.assertIsInstance(v.new, DemoModel)
         self.assertIsNone(v.old)
+
+    def test_get_permissions_no_class(self):
+        v = DemoModelValidation({"name": "New"}, instance_class=DemoModel)
+        self.assertIsNone(v.get_permissions(None))
+
+    def test_get_permissions(self):
+        v = DemoModelValidation({"name": "New"}, instance_class=DemoModel)
+        v.PERMISSIONS_CLASS = DemoModelPermissions
+        self.assertEqual(v.get_permissions(None), {
+            "edit": {
+                "name": "edit",
+                "description": "edit",
+                "status": "edit",
+                "document": "edit",
+            }
+        })

@@ -1,5 +1,13 @@
-from validator.validation import CompleteValidation
+class DemoModelPermissions(object):
+    def __init__(self, **kwargs):
+        """Placeholder"""
 
-
-class DemoModelValidation(CompleteValidation):
-    VALIDATION_CLASS = "sample.DemoModel"
+    def get_permissions(self):
+        return {
+            "edit": {
+                "name": "edit",
+                "description": "edit",
+                "status": "edit",
+                "document": "edit",
+            }
+        }
