@@ -1,3 +1,9 @@
+def pend_permission(instance, user):
+    if user is not None:
+        return True
+    return False
+
+
 class DemoModelPermissions(object):
     def __init__(self, **kwargs):
         """Placeholder"""
