@@ -14,13 +14,9 @@ from validator.decorators import (
     state_error_string,
     transition_error_string,
 )
+from validator.utils import update_object
 
 logger = logging.getLogger(__name__)
-
-
-def update_object(obj, kwdict):
-    for k, v in kwdict.items():
-        setattr(obj, k, v)
 
 
 class CompleteValidation(object):

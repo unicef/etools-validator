@@ -137,3 +137,8 @@ def _unicode_if(s):
     # str instances lack a method (.isnumeric()) that exists on Python 2
     # unicode instances and Python 3 str instances.
     return s if hasattr(s, 'isnumeric') else s.decode('utf-8')
+
+
+def update_object(obj, kwdict):
+    for k, v in kwdict.items():
+        setattr(obj, k, v)

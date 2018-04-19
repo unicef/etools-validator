@@ -152,3 +152,10 @@ class TestCheckRigidRelated(TestCase):
         parent1.children_old = []
         parent2.old_instance = parent1
         self.assertTrue(utils.check_rigid_related(parent2, "children"))
+
+
+class TestUpdateObject(TestCase):
+    def test_update(self):
+        m = models.DemoModel(name="Old")
+        utils.update_object(m, {"name": "New"})
+        self.assertEqual(m.name, "New")
