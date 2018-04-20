@@ -3,73 +3,42 @@ jobs:
   build:
     working_directory: ~/code
     docker:
-      image: unicef/etools:test-base-p3
-      environment:
-        PGHOST: 127.0.0.1
-        DATABASE_URL: "postgis://postgres:postgres@localhost:5432/circle_test"
-      - image: circleci/postgres:9.5-alpine-postgis
-        environment:
-          POSTGRES_USER: postgres
-          PGUSER: postgres
-          POSTGRES_DB: circle_test
-          POSTGRES_PASSWORD: postgres
+      - image: circleci/python:3.6
     steps:
       - checkout
-      - restore_cache:
-          key: deps2-{{ .Branch }}-{{ checksum "requirements/base.txt" }}--{{ checksum "requirements/test.txt" }}-{{ checksum ".circleci/config.yml" }}
       - run:
           name: create main virtualenv, install requirements
           command: |
             python3 -m venv env1
             . env1/bin/activate
-            pip install -r requirements/test.txt
-      - save_cache:
-          key: deps2-{{ .Branch }}-{{ checksum "requirements/base.txt" }}--{{ checksum "requirements/test.txt" }}-{{ checksum ".circleci/config.yml" }}
-          paths:
-            - "env1"
-            - /root/.cache/pip
+            pip install -r requirements/dev.txt
       - run:
           name: run tests
           command: |
             . env1/bin/activate
             coverage run manage.py test
-      - store_artifacts:
-          path: test-reports/
-          destination: tr1
-
+      - run:
+          name: report coverage
+          command: |
+            . env1/bin/activate
+            coverage report
   package:
     working_directory: ~/code
     docker:
-      image: unicef/etools:test-base-p3
-      environment:
-        PGHOST: 127.0.0.1
-        DATABASE_URL: "postgis://postgres:postgres@localhost:5432/circle_test"
-      - image: circleci/postgres:9.5-alpine-postgis
-        environment:
-          POSTGRES_USER: postgres
-          PGUSER: postgres
-          POSTGRES_DB: circle_test
-          POSTGRES_PASSWORD: postgres
+      - image: circleci/python:3.6
     steps:
       - checkout
-      - restore_cache:
-          key: deps2-{{ .Branch }}-{{ checksum "requirements/base.txt" }}--{{ checksum "requirements/test.txt" }}-{{ checksum ".circleci/config.yml" }}
       - run:
           name: create main virtualenv, install requirements
           command: |
             python3 -m venv env1
             . env1/bin/activate
-            pip install -r requirements/test.txt
-      - save_cache:
-          key: deps2-{{ .Branch }}-{{ checksum "requirements/base.txt" }}--{{ checksum "requirements/test.txt" }}-{{ checksum ".circleci/config.yml" }}
-          paths:
-            - "env1"
-            - /root/.cache/pip
+            pip install -r requirements/dev.txt
       - run:
           name: verify git tag vs version
           command: |
             . env1/bin/activate
-            python setup.py verify
+            python3 setup.py verify
       - run:
           name: init .pypirc
           command: |
