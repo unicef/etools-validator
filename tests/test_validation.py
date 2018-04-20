@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from django.contrib.contenttypes.models import ContentType
 
-from demo.sample.models import DemoModel
+from demo.sample.models import DemoModel, DemoModelNoAuto
 from demo.sample.validation import DemoModelValidation
 from demo.sample.permissions import DemoModelPermissions
 
@@ -293,8 +293,10 @@ class TestCompleteValidation(TestCase):
         self.assertTrue(v.auto_transition_validation(v.transition))
 
     def test_first_available_auto_transition_empty(self):
-        DemoModel.AUTO_TRANSITIONS = {}
-        v = DemoModelValidation({"name": "New"}, instance_class=DemoModel)
+        v = DemoModelValidation(
+            {"name": "New"},
+            instance_class=DemoModelNoAuto
+        )
         self.assertEqual(
             v._first_available_auto_transition(),
             (None, None, None)
@@ -302,17 +304,34 @@ class TestCompleteValidation(TestCase):
 
     def test_first_available_auto_transition(self):
         old = DemoModelFactory(name="Old")
-        new = {"name": "New"}
-        v = DemoModelValidation(new, old=old)
+        v = DemoModelValidation({"name": "New"}, old=old)
         self.assertEqual(
             v._first_available_auto_transition(),
             (True, "pending", [])
         )
 
     def test_make_auto_transition_none(self):
-        DemoModel.AUTO_TRANSITIONS = {}
-        v = DemoModelValidation({"name": "New"}, instance_class=DemoModel)
+        v = DemoModelValidation(
+            {"name": "New"},
+            instance_class=DemoModelNoAuto
+        )
         self.assertFalse(v._make_auto_transition())
+
+    def test_make_auto_transition_invalid_state(self):
+        old = DemoModelFactory(name="Old")
+        v = DemoModelValidation({"name": "New"}, old=old)
+        self.assertEqual(
+            v._first_available_auto_transition(),
+            (True, "pending", [])
+        )
+        self.assertFalse(v._make_auto_transition())
+
+    def test_make_auto_transitions(self):
+        v = DemoModelValidation(
+            {"name": "New"},
+            instance_class=DemoModelNoAuto
+        )
+        self.assertFalse(v.make_auto_transitions())
 
     def test_map_errors(self):
         v = DemoModelValidation({"name": "New"}, instance_class=DemoModel)
@@ -321,3 +340,46 @@ class TestCompleteValidation(TestCase):
     def test_map_errors_not_found(self):
         v = DemoModelValidation({"name": "New"}, instance_class=DemoModel)
         self.assertEqual(v.map_errors(["unknown"]), ["unknown"])
+
+    def test_apply_current_side_effects_status_equal(self):
+        old = DemoModelFactory(name="Old")
+        v = DemoModelValidation({"name": "New"}, old=old)
+        self.assertIsNone(v._apply_current_side_effects())
+
+    def test_apply_current_side_effects_none(self):
+        """No defined side effects"""
+        v = DemoModelValidation({"name": "New"}, instance_class=DemoModel)
+        self.assertIsNone(v._apply_current_side_effects())
+
+    def test_total_validation_empty(self):
+        user = UserFactory()
+        new = {"name": "New"}
+        v = DemoModelValidation(new, user=user, instance_class=DemoModel)
+        v.BASIC_VALIDATIONS = []
+        self.assertEqual(v.total_validation, (True, []))
+
+    def test_total_validation_basic(self):
+        v = DemoModelValidation({"name": "New"}, instance_class=DemoModel)
+        self.assertEqual(v.total_validation, (False, ["demo_validation"]))
+
+    def test_is_valid_false(self):
+        v = DemoModelValidation({"name": "New"}, instance_class=DemoModel)
+        self.assertFalse(v.is_valid)
+
+    def test_is_valid(self):
+        user = UserFactory()
+        new = {"name": "New"}
+        v = DemoModelValidation(new, user=user, instance_class=DemoModel)
+        v.BASIC_VALIDATIONS = []
+        self.assertTrue(v.is_valid)
+
+    def test_errors(self):
+        v = DemoModelValidation({"name": "New"}, instance_class=DemoModel)
+        self.assertEqual(v.errors, ["demo_validation"])
+
+    def test_is_valid_none(self):
+        user = UserFactory()
+        new = {"name": "New"}
+        v = DemoModelValidation(new, user=user, instance_class=DemoModel)
+        v.BASIC_VALIDATIONS = []
+        self.assertEqual(v.errors, [])

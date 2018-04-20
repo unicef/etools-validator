@@ -57,6 +57,10 @@ class DemoModel(models.Model):
         self.save()
 
 
+class DemoModelNoAuto(DemoModel):
+    AUTO_TRANSITIONS = {}
+
+
 class DemoChildModel(models.Model):
     name = models.CharField(max_length=50)
     parent = models.ForeignKey(DemoModel, related_name="children")
