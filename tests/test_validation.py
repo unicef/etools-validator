@@ -3,7 +3,7 @@ from unittest import TestCase
 from django.contrib.contenttypes.models import ContentType
 
 from demo.sample.models import DemoModel, DemoModelNoAuto
-from demo.sample.validation import DemoModelValidation
+from demo.sample.validations import DemoModelValidation
 from demo.sample.permissions import DemoModelPermissions
 
 from validator.exceptions import TransitionError

@@ -21,7 +21,7 @@ class DemoModel(models.Model):
 
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
-    document = models.FileField()
+    document = models.FileField(null=True, blank=True)
     status = FSMField(default=STATUS_NEW, choices=STATUS_CHOICES)
 
     def permission_structure(self):
