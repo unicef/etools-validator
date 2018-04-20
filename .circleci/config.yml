@@ -1,28 +1,22 @@
-defaults: &defaults
-  working_directory: ~/code
-  docker:
-    image: unicef/etools:test-base-p3
-    environment:
-      PGHOST: 127.0.0.1
-      DATABASE_URL: "postgis://postgres:postgres@localhost:5432/circle_test"
-    - image: circleci/postgres:9.5-alpine-postgis
-      environment:
-        POSTGRES_USER: postgres
-        PGUSER: postgres
-        POSTGRES_DB: circle_test
-        POSTGRES_PASSWORD: postgres
-
-cache_key: &key
-  key: deps2-{{ .Branch }}-{{ checksum "requirements/base.txt" }}--{{ checksum "requirements/test.txt" }}-{{ checksum ".circleci/config.yml" }}
-
 version: 2
 jobs:
   build:
-    <<: *defaults
+    working_directory: ~/code
+    docker:
+      image: unicef/etools:test-base-p3
+      environment:
+        PGHOST: 127.0.0.1
+        DATABASE_URL: "postgis://postgres:postgres@localhost:5432/circle_test"
+      - image: circleci/postgres:9.5-alpine-postgis
+        environment:
+          POSTGRES_USER: postgres
+          PGUSER: postgres
+          POSTGRES_DB: circle_test
+          POSTGRES_PASSWORD: postgres
     steps:
       - checkout
       - restore_cache:
-          <<: *key
+          key: deps2-{{ .Branch }}-{{ checksum "requirements/base.txt" }}--{{ checksum "requirements/test.txt" }}-{{ checksum ".circleci/config.yml" }}
       - run:
           name: create main virtualenv, install requirements
           command: |
@@ -30,7 +24,7 @@ jobs:
             . env1/bin/activate
             pip install -r requirements/test.txt
       - save_cache:
-          <<: *key
+          key: deps2-{{ .Branch }}-{{ checksum "requirements/base.txt" }}--{{ checksum "requirements/test.txt" }}-{{ checksum ".circleci/config.yml" }}
           paths:
             - "env1"
             - /root/.cache/pip
@@ -44,11 +38,22 @@ jobs:
           destination: tr1
 
   package:
-    <<: *defaults
+    working_directory: ~/code
+    docker:
+      image: unicef/etools:test-base-p3
+      environment:
+        PGHOST: 127.0.0.1
+        DATABASE_URL: "postgis://postgres:postgres@localhost:5432/circle_test"
+      - image: circleci/postgres:9.5-alpine-postgis
+        environment:
+          POSTGRES_USER: postgres
+          PGUSER: postgres
+          POSTGRES_DB: circle_test
+          POSTGRES_PASSWORD: postgres
     steps:
       - checkout
       - restore_cache:
-          <<: *key
+          key: deps2-{{ .Branch }}-{{ checksum "requirements/base.txt" }}--{{ checksum "requirements/test.txt" }}-{{ checksum ".circleci/config.yml" }}
       - run:
           name: create main virtualenv, install requirements
           command: |
@@ -56,7 +61,7 @@ jobs:
             . env1/bin/activate
             pip install -r requirements/test.txt
       - save_cache:
-          <<: *key
+          key: deps2-{{ .Branch }}-{{ checksum "requirements/base.txt" }}--{{ checksum "requirements/test.txt" }}-{{ checksum ".circleci/config.yml" }}
           paths:
             - "env1"
             - /root/.cache/pip
@@ -79,7 +84,7 @@ jobs:
 
 workflows:
   version: 2
-  build_test_package:
+  build_and_package:
     jobs:
       - build
       - package:
