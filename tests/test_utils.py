@@ -100,7 +100,7 @@ class TestCheckRequiredFields(TestCase):
     def test_file_does_not_exist(self):
         m = models.DemoChildModel(name="Child")
         fields = ["name", "parent"]
-        required, field = utils.check_required_fields(m , fields)
+        required, field = utils.check_required_fields(m, fields)
         self.assertFalse(required)
         self.assertEqual(field, "parent")
 
