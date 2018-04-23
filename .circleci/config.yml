@@ -40,6 +40,11 @@ jobs:
             . env1/bin/activate
             python3 setup.py verify
       - run:
+          name: upgrade pip
+          command: |
+            . env1/bin/activate
+            pip install --upgrade pip
+      - run:
           name: init .pypirc
           command: |
             echo -e "[pypi]" >> ~/.pypirc
