@@ -31,8 +31,8 @@ class VerifyTagVersion(install):
 
 
 setup(
-    name='validator',
-    url='https://github.com/unicef/validator',
+    name='etools-validator',
+    url='https://github.com/unicef/etools-validator',
     author='UNICEF',
     author_email='rapidpro@unicef.org',
     description='Django rest framework validation enhancement',
