@@ -1,0 +1,5 @@
+include *.rst
+include requirements/*.txt
+recursive-include validator *
+prune tests
+prune demo

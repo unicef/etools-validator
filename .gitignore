@@ -3,3 +3,4 @@
 .coverage
 build/
 test*.txt
+dist/

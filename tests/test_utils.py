@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from demo.sample import models
 
+from tests.factories import DemoChildModelFactory, DemoModelFactory
 from validator import utils
 
 
@@ -96,6 +97,13 @@ class TestCheckRequiredFields(TestCase):
         self.assertFalse(required)
         self.assertEqual(field, ["document"])
 
+    def test_file_does_not_exist(self):
+        m = models.DemoChildModel(name="Child")
+        fields = ["name", "parent"]
+        required, field = utils.check_required_fields(m, fields)
+        self.assertFalse(required)
+        self.assertEqual(field, "parent")
+
 
 class TestFieldComparison(TestCase):
     def test_simple(self):
@@ -153,6 +161,58 @@ class TestCheckRigidRelated(TestCase):
         parent1.children_old = []
         parent2.old_instance = parent1
         self.assertTrue(utils.check_rigid_related(parent2, "children"))
+
+
+class TestCheckRigidFields(TestCase):
+    def test_no_old_instance(self):
+        obj = models.DemoModel(name="Object")
+        self.assertEqual(utils.check_rigid_fields(obj, ["name"]), (True, None))
+
+    def test_fields_differ(self):
+        old = DemoModelFactory(name="Old")
+        new = models.DemoModel(name="New")
+        new.old_instance = old
+        self.assertEqual(
+            utils.check_rigid_fields(new, ["name"]),
+            (False, "name")
+        )
+
+    def test_fields_match(self):
+        old = DemoModelFactory(name="Name")
+        new = models.DemoModel(name="Name")
+        new.old_instance = old
+        self.assertEqual(
+            utils.check_rigid_fields(new, ["name"]),
+            (True, None)
+        )
+
+    def test_new_field_does_not_exist(self):
+        old = DemoChildModelFactory(name="Old")
+        new = models.DemoChildModel(name="New")
+        new.old_instance = old
+        self.assertEqual(
+            utils.check_rigid_fields(new, ["parent"]),
+            (False, "parent")
+        )
+
+    def test_old_field_does_not_exist(self):
+        parent = DemoModelFactory()
+        old = models.DemoChildModel(name="Old")
+        new = models.DemoChildModel(name="New", parent=parent)
+        new.old_instance = old
+        self.assertEqual(
+            utils.check_rigid_fields(new, ["parent"]),
+            (False, "parent")
+        )
+
+    def test_field_does_not_exist(self):
+        old = models.DemoChildModel(name="Old")
+        new = models.DemoChildModel(name="New")
+        new.old_instance = old
+        self.assertEqual(
+            utils.check_rigid_fields(new, ["parent"]),
+            (True, None)
+        )
 
 
 class TestUpdateObject(TestCase):
