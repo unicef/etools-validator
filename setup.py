@@ -34,7 +34,7 @@ setup(
     name='validator',
     url='https://github.com/unicef/validator',
     author='UNICEF',
-    author_email='developers@unicef.org',
+    author_email='rapidpro@unicef.org',
     description='Django rest framework validation enhancement',
     version=VERSION,
     long_description=read('README.rst'),
