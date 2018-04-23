@@ -40,11 +40,6 @@ jobs:
             . env1/bin/activate
             python3 setup.py verify
       - run:
-          name: upgrade pip
-          command: |
-            . env1/bin/activate
-            pip install --upgrade pip
-      - run:
           name: init .pypirc
           command: |
             echo -e "[pypi]" >> ~/.pypirc
@@ -54,7 +49,7 @@ jobs:
           name: create and upload package
           command: |
             . env1/bin/activate
-            python setup.py sdist bdist_wheel upload
+            python setup.py sdist upload
 
 workflows:
   version: 2
