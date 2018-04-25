@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from demo.sample.models import DemoModel, DemoChildModel
+from .models import DemoChildModel, DemoModel
 
 
 class DemoChildModelSerializer(serializers.ModelSerializer):

@@ -1,7 +1,8 @@
 class _BaseStateError(BaseException):
     '''Base class for state-related exceptions.
     Accepts only one param which must be a list of strings.'''
-    def __init__(self, message=[]):
+    def __init__(self, message=None):
+        message = message or []
         if not isinstance(message, list):
             raise TypeError('{} takes a list of errors not {}'.format(
                 self.__class__,

@@ -1,14 +1,17 @@
-from unittest import TestCase
-
 from django.contrib.contenttypes.models import ContentType
 
-from demo.sample.models import DemoModel, DemoModelNoAuto
-from demo.sample.validations import DemoModelValidation
-from demo.sample.permissions import DemoModelPermissions
+import pytest
+from unittest import TestCase
 
-from validator.exceptions import TransitionError
-from validator.validation import CompleteValidation
-from tests.factories import DemoModelFactory, PermissionFactory, UserFactory
+from etools_validator.exceptions import TransitionError
+from etools_validator.validation import CompleteValidation
+
+from demo.factories import DemoModelFactory, PermissionFactory, UserFactory
+from demo.sample.models import DemoModel, DemoModelNoAuto
+from demo.sample.permissions import DemoModelPermissions
+from demo.sample.validations import DemoModelValidation
+
+pytestmark = pytest.mark.django_db
 
 
 class TestCompleteValidation(TestCase):
@@ -50,6 +53,7 @@ class TestCompleteValidation(TestCase):
     def test_init_new_dict_invalid_validation_class(self):
         class TestValidation(CompleteValidation):
             VALIDATION_CLASS = "wrong.Model"
+
         with self.assertRaisesRegexp(TypeError, "instance_class is not"):
             TestValidation({"name": "New"})
 
