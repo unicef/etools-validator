@@ -8,10 +8,20 @@ help:
 	@echo "lint                    run pyflake/isort checks"
 	@echo "clean                   clean dev environment"
 	@echo "fullclean               totally remove any development related temporary files"
-	@echo "test                    "
+	@echo "test                    run test suite"
+
 
 develop:
 	pip install -e .[dev]
+
+
+test:
+	pytest tests/
+
+
+rundemo:
+	PYTHONPATH=${PYTHONPATH}:${DEMOPATH} django-admin.py migrate --settings ${DJANGO_SETTINGS_MODULE}
+	PYTHONPATH=${PYTHONPATH}:${DEMOPATH} django-admin.py runserver --settings ${DJANGO_SETTINGS_MODULE}
 
 
 lint:
