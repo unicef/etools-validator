@@ -1,5 +1,13 @@
-include *.rst
-include requirements/*.txt
-recursive-include validator *
+include setup.py
+include LICENSE
+include README.rst
+
+exclude pytest.ini
+exclude tox.ini
+exclude .isort.cfg
+exclude .flake8
+
+recursive-include src  *
+
 prune tests
-prune demo
+prune .circlecix

@@ -1,8 +1,7 @@
-from django.db.models import ObjectDoesNotExist
-
+from django.db.models import Field, ObjectDoesNotExist
 from rest_framework.exceptions import ValidationError
 
-from validator.parsers import parse_multipart_data
+from .parsers import parse_multipart_data
 
 
 class ValidatorViewMixin(object):
@@ -19,17 +18,9 @@ class ValidatorViewMixin(object):
         dt = parse_multipart_data(dt_cp)
         return dt
 
-    def up_related_field(
-            self,
-            mother_obj,
-            field,
-            fieldClass,
-            fieldSerializer,
-            rel_prop_name,
-            reverse_name,
-            partial=False,
-            nested_related_names=None
-    ):
+    def up_related_field(self, mother_obj, field: Field, fieldClass, fieldSerializer,
+                         rel_prop_name, reverse_name, partial=False,
+                         nested_related_names=None):
         if not field:
             return
 

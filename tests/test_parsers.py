@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from validator import parsers
+from etools_validator import parsers
 
 
 class TestIntOrString(TestCase):

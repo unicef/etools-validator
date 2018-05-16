@@ -1,8 +1,4 @@
-from validator.exceptions import (
-    BasicValidationError,
-    StateValidationError,
-    TransitionError
-)
+from .exceptions import BasicValidationError, StateValidationError, TransitionError
 
 
 def error_string(function):
@@ -16,6 +12,7 @@ def error_string(function):
                 return (True, [])
             else:
                 return (False, [function.__name__])
+
     return wrapper
 
 
@@ -30,6 +27,7 @@ def transition_error_string(function):
             return (True, [])
         else:
             return (False, ['generic_transition_fail'])
+
     return wrapper
 
 
@@ -44,4 +42,5 @@ def state_error_string(function):
             return (True, [])
         else:
             return (False, ['generic_state_validation_fail'])
+
     return wrapper

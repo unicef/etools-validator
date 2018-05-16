@@ -1,4 +1,4 @@
-from validator.validation import CompleteValidation
+from etools_validator.validation import CompleteValidation
 
 
 def demo_validation(instance):

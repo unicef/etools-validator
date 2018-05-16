@@ -1,11 +1,6 @@
 from unittest import TestCase
 
-from validator.exceptions import (
-    _BaseStateError,
-    BasicValidationError,
-    StateValidationError,
-    TransitionError,
-)
+from etools_validator.exceptions import _BaseStateError, BasicValidationError, StateValidationError, TransitionError
 
 
 class TestExceptions(TestCase):

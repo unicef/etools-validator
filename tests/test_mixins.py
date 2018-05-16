@@ -1,12 +1,28 @@
-from unittest import TestCase
-
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.urlresolvers import resolve, reverse
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
+import pytest
+from unittest import TestCase
+
+from demo.factories import DemoModelFactory, UserFactory
 from demo.sample.models import DemoModel
-from tests.factories import DemoModelFactory, UserFactory
+from etools_validator.mixins import ValidatorViewMixin
+
+try:
+    from django.urls import reverse, resolve  # django 2.0
+except ImportError:
+    from django.core.urlresolvers import resolve, reverse  # django < 2.0
+
+pytestmark = pytest.mark.django_db
+
+
+@pytest.mark.parametrize("param", ['', None, 'true', 'false'])
+def test_validatorviewmixin(param):
+    request = APIRequestFactory()
+    request.data = {"sample": param}
+    m = ValidatorViewMixin()
+    assert m._parse_data(request)
 
 
 class TestValidatorViewMixin(TestCase):

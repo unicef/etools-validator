@@ -1,7 +1,8 @@
 from django.conf.urls import url
 
-from demo.sample.views import DemoCreateView, DemoUpdateView
+from .views import DemoCreateView, DemoUpdateView
 
+app_name = "sample"
 
 urlpatterns = (
     url(r'^create/$', view=DemoCreateView.as_view(), name='create'),

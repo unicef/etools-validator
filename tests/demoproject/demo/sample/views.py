@@ -3,14 +3,11 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from validator.mixins import ValidatorViewMixin
+from etools_validator.mixins import ValidatorViewMixin
 
-from demo.sample.models import DemoModel
-from demo.sample.serializers import (
-    DemoChildModelSerializer,
-    DemoModelSerializer,
-)
-from demo.sample.validations import DemoModelValidation
+from .models import DemoModel
+from .serializers import DemoChildModelSerializer, DemoModelSerializer
+from .validations import DemoModelValidation
 
 
 class DemoCreateView(ValidatorViewMixin, CreateAPIView):
