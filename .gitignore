@@ -3,7 +3,6 @@
 *.sqlite3
 .coverage
 build/
-test*.txt
 dist/
 coverage.xml
 .pytest_cache/
