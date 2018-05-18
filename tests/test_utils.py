@@ -20,7 +20,8 @@ class TestGetAllFieldNames(TestCase):
             "document",
             "status",
             "children",
-            "demomodelnoauto"
+            "demomodelnoauto",
+            "special",
         ])
 
     def test_related(self):

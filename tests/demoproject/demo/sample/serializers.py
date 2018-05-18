@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import DemoChildModel, DemoModel
+from .models import DemoChildModel, DemoModel, SpecialModel
 
 
 class DemoChildModelSerializer(serializers.ModelSerializer):
@@ -14,4 +14,10 @@ class DemoModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DemoModel
+        fields = "__all__"
+
+
+class SpecialModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpecialModel
         fields = "__all__"

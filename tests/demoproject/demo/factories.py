@@ -19,6 +19,13 @@ class DemoChildModelFactory(factory.django.DjangoModelFactory):
         model = models.DemoChildModel
 
 
+class SpecialModelFactory(factory.django.DjangoModelFactory):
+    demo = factory.SubFactory(DemoModelFactory)
+
+    class Meta:
+        model = models.SpecialModel
+
+
 class UserFactory(factory.django.DjangoModelFactory):
     username = fuzzy.FuzzyText(length=50)
 

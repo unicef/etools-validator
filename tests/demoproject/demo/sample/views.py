@@ -6,7 +6,11 @@ from rest_framework.serializers import ValidationError
 from etools_validator.mixins import ValidatorViewMixin
 
 from .models import DemoModel
-from .serializers import DemoChildModelSerializer, DemoModelSerializer
+from .serializers import (
+    DemoChildModelSerializer,
+    DemoModelSerializer,
+    SpecialModelSerializer
+)
 from .validations import DemoModelValidation
 
 
@@ -44,11 +48,12 @@ class DemoUpdateView(ValidatorViewMixin, UpdateAPIView):
     serializer_class = DemoModelSerializer
 
     SERIALIZER_MAP = {
-        "children": DemoChildModelSerializer
+        "children": DemoChildModelSerializer,
+        "special": SpecialModelSerializer,
     }
 
     def update(self, request, *args, **kwargs):
-        related_fields = ['children']
+        related_fields = ['children', 'special']
         instance, old_instance, serializer = self.my_update(
             request,
             related_fields,

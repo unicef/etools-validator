@@ -61,4 +61,17 @@ class DemoModelNoAuto(DemoModel):
 
 class DemoChildModel(models.Model):
     name = models.CharField(max_length=50)
-    parent = models.ForeignKey(DemoModel, on_delete=models.CASCADE, related_name="children")
+    parent = models.ForeignKey(
+        DemoModel,
+        on_delete=models.CASCADE,
+        related_name="children"
+    )
+
+
+class SpecialModel(models.Model):
+    name = models.CharField(max_length=50)
+    demo = models.OneToOneField(
+        DemoModel,
+        on_delete=models.CASCADE,
+        related_name="special"
+    )
