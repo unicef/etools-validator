@@ -1,4 +1,6 @@
+factory-boy
 flake8
+isort
 pytest
 pytest-cov
 pytest-django
