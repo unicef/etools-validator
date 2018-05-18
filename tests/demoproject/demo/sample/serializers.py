@@ -6,7 +6,7 @@ from .models import DemoChildModel, DemoModel
 class DemoChildModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = DemoChildModel
-        fields = ("name", )
+        fields = "__all__"
 
 
 class DemoModelSerializer(serializers.ModelSerializer):
