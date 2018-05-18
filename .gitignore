@@ -6,3 +6,4 @@ build/
 dist/
 coverage.xml
 .pytest_cache/
+.tox/
