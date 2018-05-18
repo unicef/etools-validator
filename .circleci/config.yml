@@ -18,12 +18,6 @@ jobs:
       - image: circleci/python:3.6
     steps:
       - checkout
-#      - run:
-#          name: create main virtualenv, install requirements
-#          command: |
-#            python3 -m venv env1
-#            . env1/bin/activate
-#            pip install -r requirements/dev.txt
       - run:
           name: verify git tag vs version
           command: |
