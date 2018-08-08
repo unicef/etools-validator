@@ -1,3 +1,0 @@
-Django==1.10.8
-django-fsm==2.4.0
-djangorestframework==3.5.3

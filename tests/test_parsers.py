@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from validator import parsers
+from etools_validator import parsers
 
 
 class TestIntOrString(TestCase):
@@ -81,8 +81,8 @@ class TestCreateKey(TestCase):
         res = parsers._create_key(["sample", "d", "k", "2"])
         self.assertEqual(res, "sample[d][k][2]")
 
-    def test_unicode(self):
-        """If multiple elements in list then return dict str of path"""
+    def test_nonascii(self):
+        """If nonascii in list it still works"""
         res = parsers._create_key(["sample", u"m\xe9lange", "k", "2"])
         self.assertEqual(res, "sample[m\xe9lange][k][2]")
 

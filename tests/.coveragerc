@@ -1,8 +1,9 @@
 [run]
 branch = true
-source = validator
+source = etools_validator
 
 [report]
+fail_under = 95
 ignore_errors = True
 exclude_lines =
    pragma: no cover

@@ -1,12 +1,8 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
-from validator import decorators
-from validator.exceptions import (
-    BasicValidationError,
-    StateValidationError,
-    TransitionError,
-)
+from etools_validator import decorators
+from etools_validator.exceptions import BasicValidationError, StateValidationError, TransitionError
 
 
 class TestErrorString(TestCase):

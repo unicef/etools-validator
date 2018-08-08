@@ -3,14 +3,15 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from validator.mixins import ValidatorViewMixin
+from etools_validator.mixins import ValidatorViewMixin
 
-from demo.sample.models import DemoModel
-from demo.sample.serializers import (
+from .models import DemoModel
+from .serializers import (
     DemoChildModelSerializer,
     DemoModelSerializer,
+    SpecialModelSerializer
 )
-from demo.sample.validations import DemoModelValidation
+from .validations import DemoModelValidation
 
 
 class DemoCreateView(ValidatorViewMixin, CreateAPIView):
@@ -47,11 +48,12 @@ class DemoUpdateView(ValidatorViewMixin, UpdateAPIView):
     serializer_class = DemoModelSerializer
 
     SERIALIZER_MAP = {
-        "children": DemoChildModelSerializer
+        "children": DemoChildModelSerializer,
+        "special": SpecialModelSerializer,
     }
 
     def update(self, request, *args, **kwargs):
-        related_fields = ['children']
+        related_fields = ['children', 'special']
         instance, old_instance, serializer = self.my_update(
             request,
             related_fields,

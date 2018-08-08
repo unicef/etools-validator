@@ -1,8 +1,8 @@
-import factory
-from factory import fuzzy
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
+
+import factory
+from factory import fuzzy
 
 from demo.sample import models
 
@@ -17,6 +17,13 @@ class DemoChildModelFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = models.DemoChildModel
+
+
+class SpecialModelFactory(factory.django.DjangoModelFactory):
+    demo = factory.SubFactory(DemoModelFactory)
+
+    class Meta:
+        model = models.SpecialModel
 
 
 class UserFactory(factory.django.DjangoModelFactory):

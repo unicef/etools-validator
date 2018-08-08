@@ -1,9 +1,12 @@
+import pytest
 from unittest import TestCase
 
+from etools_validator import utils
+
+from demo.factories import DemoChildModelFactory, DemoModelFactory
 from demo.sample import models
 
-from tests.factories import DemoChildModelFactory, DemoModelFactory
-from validator import utils
+pytestmark = pytest.mark.django_db
 
 
 class TestGetAllFieldNames(TestCase):
@@ -17,7 +20,8 @@ class TestGetAllFieldNames(TestCase):
             "document",
             "status",
             "children",
-            "demomodelnoauto"
+            "demomodelnoauto",
+            "special",
         ])
 
     def test_related(self):
@@ -151,7 +155,33 @@ class TestCheckRigidRelated(TestCase):
         parent2 = models.DemoModel(name="parent2")
         parent1.children_old = [child1]
         parent2.old_instance = parent1
+        self.assertFalse(len(parent2.children.filter()))
+        self.assertTrue(len(parent1.children_old))
         self.assertFalse(utils.check_rigid_related(parent2, "children"))
+
+    def test_comparison_no_match(self):
+        """False, if related field old and new do not match"""
+        parent1 = DemoModelFactory(name="parent1")
+        child1 = DemoChildModelFactory(name="child1", parent=parent1)
+        parent2 = DemoModelFactory(name="parent2")
+        DemoChildModelFactory(name="child2", parent=parent2)
+        parent1.children_old = [child1]
+        parent2.old_instance = parent1
+        self.assertEqual(len(parent2.children.filter()), 1)
+        self.assertEqual(len(parent1.children_old), 1)
+        self.assertFalse(utils.check_rigid_related(parent2, "children"))
+
+    def test_comparison_match(self):
+        """True, if related field old and new do match"""
+        parent1 = DemoModelFactory(name="parent1")
+        DemoChildModelFactory(name="child1", parent=parent1)
+        parent2 = DemoModelFactory(name="parent2")
+        child2 = DemoChildModelFactory(name="child2", parent=parent2)
+        parent1.children_old = [child2]
+        parent2.old_instance = parent1
+        self.assertEqual(len(parent2.children.filter()), 1)
+        self.assertEqual(len(parent1.children_old), 1)
+        self.assertTrue(utils.check_rigid_related(parent2, "children"))
 
     def test_related_current_empty(self):
         """Count on old related field matches, and current is empty"""
@@ -211,6 +241,48 @@ class TestCheckRigidFields(TestCase):
         new.old_instance = old
         self.assertEqual(
             utils.check_rigid_fields(new, ["parent"]),
+            (True, None)
+        )
+
+    def test_field_related(self):
+        old = DemoModelFactory(name="Old")
+        DemoChildModelFactory(name="child1", parent=old)
+        new = DemoModelFactory(name="New")
+        child2 = DemoChildModelFactory(name="child2", parent=new)
+        old.children_old = [child2]
+        new.old_instance = old
+        self.assertEqual(len(new.children.filter()), 1)
+        self.assertEqual(len(old.children_old), 1)
+        self.assertEqual(
+            utils.check_rigid_fields(new, ["children"], related=True),
+            (True, None)
+        )
+
+    def test_field_related_not(self):
+        old = DemoModelFactory(name="Old")
+        DemoChildModelFactory(name="child1", parent=old)
+        new = DemoModelFactory(name="New")
+        DemoChildModelFactory(name="child2", parent=new)
+        old.children_old = []
+        new.old_instance = old
+        self.assertEqual(len(new.children.filter()), 1)
+        self.assertEqual(len(old.children_old), 0)
+        self.assertEqual(
+            utils.check_rigid_fields(new, ["children"], related=True),
+            (False, "children")
+        )
+
+    def test_field_related_param_false(self):
+        old = DemoModelFactory(name="Old")
+        DemoChildModelFactory(name="child1", parent=old)
+        new = DemoModelFactory(name="New")
+        child2 = DemoChildModelFactory(name="child2", parent=new)
+        old.children_old = [child2]
+        new.old_instance = old
+        self.assertEqual(len(new.children.filter()), 1)
+        self.assertEqual(len(old.children_old), 1)
+        self.assertEqual(
+            utils.check_rigid_fields(new, ["children"], related=False),
             (True, None)
         )
 

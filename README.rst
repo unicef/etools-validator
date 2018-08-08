@@ -24,7 +24,7 @@ Add ``validator`` to ``INSTALLED_APPS`` in ``settings.py``
 .. code-block:: python
    INSTALLED_APPS = [
        ...
-       'validator',
+       'etools_validator',
    ]
 
 
@@ -79,3 +79,33 @@ Coverage report is viewable in `build/coverage` directory, and can be generated 
 ::
 
    $ coverage html
+
+
+Links
+-----
+
++--------------------+----------------+--------------+--------------------+
+| Stable             |                | |master-cov| |                    |
++--------------------+----------------+--------------+--------------------+
+| Development        |                | |dev-cov|    |                    |
++--------------------+----------------+--------------+--------------------+
+| Source Code        |https://github.com/unicef/etools-validator          |
++--------------------+----------------+-----------------------------------+
+| Issue tracker      |https://github.com/unicef/etools-validator/issues   |
++--------------------+----------------+-----------------------------------+
+
+
+.. |master-cov| image:: https://circleci.com/gh/unicef/etools-validator/tree/master.svg?style=svg
+                    :target: https://circleci.com/gh/unicef/etools-validator/tree/master
+
+
+.. |dev-cov| image:: https://circleci.com/gh/unicef/etools-validator/tree/develop.svg?style=svg
+                    :target: https://circleci.com/gh/unicef/etools-validator/tree/develop
+
+
+Compatibility Matrix
+--------------------
+
+.. image:: https://travis-matrix-badges.herokuapp.com/repos/unicef/etools-validator/branches/develop
+
+

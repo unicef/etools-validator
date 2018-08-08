@@ -3,18 +3,10 @@ import logging
 
 from django.apps import apps
 from django.utils.functional import cached_property
-from django_fsm import (
-    can_proceed,
-    get_all_FIELD_transitions,
-    has_transition_perm,
-)
+from django_fsm import can_proceed, get_all_FIELD_transitions, has_transition_perm
 
-from validator.decorators import (
-    error_string,
-    state_error_string,
-    transition_error_string,
-)
-from validator.utils import update_object
+from .decorators import error_string, state_error_string, transition_error_string
+from .utils import update_object
 
 logger = logging.getLogger(__name__)
 
@@ -113,10 +105,7 @@ class CompleteValidation(object):
 
     @cached_property
     def transition(self):
-        return self._get_fsm_defined_transitions(
-            self.old_status,
-            self.new_status
-        )
+        return self._get_fsm_defined_transitions(self.old_status, self.new_status)
 
     @transition_error_string
     def transitional_validation(self):
@@ -166,10 +155,8 @@ class CompleteValidation(object):
         return result
 
     def _get_fsm_defined_transitions(self, source, target):
-        all_transitions = get_all_FIELD_transitions(
-            self.new,
-            self.new.__class__._meta.get_field('status')
-        )
+        all_transitions = get_all_FIELD_transitions(self.new,
+                                                    type(self.new)._meta.get_field('status'))
         for transition in all_transitions:
             if transition.source == source and target in transition.target:
                 return getattr(self.new, transition.method.__name__)
@@ -197,23 +184,13 @@ class CompleteValidation(object):
                 potential_transition_to
             )
             if not possible_fsm_transition:
-                template = "transition: {} -> {} is possible since there "
-                "was no transition defined on the model"
-                logger.debug(template.format(
-                    self.new.status,
-                    potential_transition_to)
-                )
+                template = "transition: {} -> {} is possible since there " \
+                           "was no transition defined on the model"
+                logger.debug(template.format(self.new.status, potential_transition_to))
             if self.auto_transition_validation(possible_fsm_transition)[0]:
                 # get the side effects function if any
-                SIDE_EFFECTS_DICT = getattr(
-                    self.new.__class__,
-                    'TRANSITION_SIDE_EFFECTS',
-                    {}
-                )
-                transition_side_effects = SIDE_EFFECTS_DICT.get(
-                    potential_transition_to,
-                    []
-                )
+                SIDE_EFFECTS_DICT = getattr(type(self.new), 'TRANSITION_SIDE_EFFECTS', {})
+                transition_side_effects = SIDE_EFFECTS_DICT.get(potential_transition_to, [])
 
                 return True, potential_transition_to, transition_side_effects
         return None, None, None

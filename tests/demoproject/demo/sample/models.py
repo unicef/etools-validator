@@ -1,23 +1,21 @@
 from django.db import models
 from django_fsm import FSMField, transition
 
-from validator.exceptions import TransitionError
+from etools_validator.exceptions import TransitionError
 
 
 class DemoModel(models.Model):
     STATUS_NEW = "new"
     STATUS_PENDING = "pending"
     STATUS_END = "end"
-    STATUS_CHOICES = (
-        (STATUS_NEW, "New"),
-        (STATUS_PENDING, "Pending"),
-        (STATUS_END, "End"),
-    )
+    STATUS_CHOICES = ((STATUS_NEW, "New"),
+                      (STATUS_PENDING, "Pending"),
+                      (STATUS_END, "End"),
+                      )
 
-    AUTO_TRANSITIONS = {
-        STATUS_NEW: [STATUS_PENDING, STATUS_END],
-        STATUS_PENDING: [STATUS_END]
-    }
+    AUTO_TRANSITIONS = {STATUS_NEW: [STATUS_PENDING, STATUS_END],
+                        STATUS_PENDING: [STATUS_END]
+                        }
 
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
@@ -63,4 +61,17 @@ class DemoModelNoAuto(DemoModel):
 
 class DemoChildModel(models.Model):
     name = models.CharField(max_length=50)
-    parent = models.ForeignKey(DemoModel, related_name="children")
+    parent = models.ForeignKey(
+        DemoModel,
+        on_delete=models.CASCADE,
+        related_name="children"
+    )
+
+
+class SpecialModel(models.Model):
+    name = models.CharField(max_length=50)
+    demo = models.OneToOneField(
+        DemoModel,
+        on_delete=models.CASCADE,
+        related_name="special"
+    )
