@@ -6,11 +6,7 @@ from rest_framework.serializers import ValidationError
 from etools_validator.mixins import ValidatorViewMixin
 
 from .models import DemoModel
-from .serializers import (
-    DemoChildModelSerializer,
-    DemoModelSerializer,
-    SpecialModelSerializer
-)
+from .serializers import DemoChildModelSerializer, DemoModelSerializer, SpecialModelSerializer
 from .validations import DemoModelValidation
 
 

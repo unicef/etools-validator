@@ -4,38 +4,51 @@ DEMOPATH=tests/demoproject
 
 
 help:
-	@echo "develop                 setup development environment"
-	@echo "lint                    run pyflake/isort checks"
-	@echo "clean                   clean dev environment"
-	@echo "fullclean               totally remove any development related temporary files"
-	@echo "test                    run test suite"
+	@echo '                                                                       '
+	@echo 'Usage:                                                                 '
+	@echo '   make clean                       remove the generated files         '
+	@echo '   make fullclean                   clean + remove tox, cache          '
+	@echo '   make lint                        run lint checks                    '
+	@echo '   make test                        run tests                          '
+	@echo '   make develop                     update develop environment         '
+	@echo '   make requirements                generate requirements files from Pipfile'
+	@echo '                                                                       '
 
 
 develop:
-	pip install pre-commit
-	pip install -e .[dev]
+	@${MAKE} clean
+	pipenv install -d
+	pip install -e .[test]
 
 
 test:
-	pytest tests/; exit 0
-
-
-rundemo:
-	PYTHONPATH=${PYTHONPATH}:${DEMOPATH} django-admin.py migrate --settings ${DJANGO_SETTINGS_MODULE}
-	PYTHONPATH=${PYTHONPATH}:${DEMOPATH} django-admin.py runserver --settings ${DJANGO_SETTINGS_MODULE}
+	pytest tests/ src/ \
+            --cov=etools_validator \
+            --cov-config=tests/.coveragerc \
+            --cov-report=html \
+            --cov-report=term
 
 
 lint:
-	flake8 src/ tests
-	isort -rc src/ --check-only
-	PYTHONPATH=${PYTHONPATH}:${DEMOPATH} django-admin.py check --settings ${DJANGO_SETTINGS_MODULE}
+	flake8 src/ tests/; exit 0;
+	isort src/ tests/ --check-only -rc; exit 0;
 
 
 clean:
-	rm -fr ${BUILDDIR} build dist src/*.egg-info .coverage coverage.xml .eggs .coverage.*
-	find src -name __pycache__ -o -name "*.py?" -o -name "*.orig" -prune | xargs rm -rf
+	@rm -rf ${BUILDDIR} .pytest_cache src/unicef_attachments.egg-info dist *.xml .cache *.egg-info .coverage .pytest MEDIA_ROOT MANIFEST .cache *.egg build STATIC
+	@find . -name __pycache__  -prune | xargs rm -rf
+	@find . -name "*.py?" -o -name "*.orig" -o -name "*.min.min.js" -o -name "*.min.min.css" -prune | xargs rm -rf
+	@rm -f coverage.xml flake.out pep8.out pytest.xml
 
 
 fullclean:
-	rm -fr .tox .cache .env .pytest_cache
-	$(MAKE) clean
+	rm -fr .tox
+	rm -f *.sqlite
+	make clean
+
+
+requirements:
+	pipenv lock -r > src/requirements/install.pip
+	pipenv lock -r -d > src/requirements/testing.pip
+	sed -i "" 's/\(.*\)==.*/\1/g' src/requirements/install.pip && sed -i "" '1d' src/requirements/install.pip
+	sed -i "" 's/\(.*\)==.*/\1/g' src/requirements/testing.pip && sed -i "" '1d' src/requirements/testing.pip
