@@ -4,41 +4,88 @@ jobs:
     working_directory: ~/code
     docker:
       - image: circleci/python:3.6
+        environment:
+          RELEASE_MATCH: "release/*"
     steps:
       - checkout
-      - run:
-          name: create main virtualenv, install requirements
-          command: |
-            python3 -m venv env1
-            . env1/bin/activate
-            pip install -r requirements/dev.txt
       - run:
           name: run tests
           command: |
-            . env1/bin/activate
-            coverage run manage.py test
-      - run:
-          name: report coverage
+            export PATH=$PATH:/home/circleci/.local/bin
+            pip install tox --user
+            tox -r
+      - deploy:
+          name: tag and release if release candidate
           command: |
-            . env1/bin/activate
-            coverage report
-  package:
+              if [[ $CIRCLE_BRANCH == $RELEASE_MATCH ]]; then
+                curl --user ${CIRCLE_TOKEN}: \
+                  --fail \
+                  --data build_parameters[CIRCLE_JOB]=tag \
+                  --data revision=$CIRCLE_SHA1 \
+                  https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
+              else
+                echo "Skipped as '$CIRCLE_BRANCH' does not match '$RELEASE_MATCH' branch"
+              fi
+  tag:
     working_directory: ~/code
     docker:
       - image: circleci/python:3.6
+        environment:
+          API_URL: https://api.github.com/repos/unicef/etools-validator
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "70:f0:6f:07:be:60:33:a2:b0:4b:a4:83:79:ff:c1:55"
       - run:
-          name: create main virtualenv, install requirements
+          name: package and release
           command: |
-            python3 -m venv env1
-            . env1/bin/activate
-            pip install -r requirements/dev.txt
+            export PATH=/home/circleci/.local/bin:$PATH
+            export TAG=${TAG:=${CIRCLE_BRANCH#*/}}
+            git status
+            git show-branch release/$TAG
+            if [ $? -eq 0 ];then
+              git reset --hard
+
+              git config user.email "ci@unicef.org"
+              git config user.name "CI"
+
+              git checkout master
+              git merge --no-ff release/$TAG -m "merge release/$TAG"
+              git tag -a -m "v$TAG" $TAG
+              git checkout develop
+              git merge --no-ff release/$TAG -m "merge release/$TAG"
+              git push origin --verbose --all
+              git push origin --verbose --tags
+              git push origin --verbose --delete release/$TAG
+            fi
       - run:
-          name: verify git tag vs version
+          name: release
           command: |
-            . env1/bin/activate
-            python3 setup.py verify
+            export TAG=${TAG:=${CIRCLE_BRANCH#*/}}
+            export TODAY=`date '+%d %B %Y at %H:%M'`
+            function is_pre()
+            {
+                [[ "$(echo "$TAG" | sed 's/[0-9.]//g')" == "" ]] && echo false || echo true
+            }
+            function data() {
+            cat <<EOF
+            { "tag_name": "$TAG",
+              "name": "v$TAG",
+              "body": "version $TAG - Built on $TODAY",
+              "draft": false,
+              "prerelease": $(is_pre)
+            }
+            EOF
+            }
+            data=$(data)
+            curl -X POST -s \
+              --fail --verbose \
+              -H "Accept: application/json" \
+              -H "Content-Type:application/json" \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              ${API_URL}/releases \
+              -d "$data"
       - run:
           name: init .pypirc
           command: |
@@ -59,20 +106,3 @@ jobs:
           command: |
             . env1/bin/activate
             python setup.py sdist bdist_wheel upload
-
-workflows:
-  version: 2
-  build_and_package:
-    jobs:
-      - build:
-          filters:
-            tags:
-              only: /.*/
-      - package:
-          requires:
-            - build
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore: /.*/
