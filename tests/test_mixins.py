@@ -1,19 +1,15 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.urls import reverse, resolve
+from django.urls import resolve, reverse
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 import pytest
 from unittest import TestCase
 
-from demo.factories import (
-    DemoChildModelFactory,
-    DemoModelFactory,
-    SpecialModelFactory,
-    UserFactory,
-)
-from demo.sample.models import DemoChildModel, DemoModel, SpecialModel
 from etools_validator.mixins import ValidatorViewMixin
+
+from demo.factories import DemoChildModelFactory, DemoModelFactory, SpecialModelFactory, UserFactory
+from demo.sample.models import DemoChildModel, DemoModel, SpecialModel
 
 pytestmark = pytest.mark.django_db
 
