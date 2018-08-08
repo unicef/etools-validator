@@ -97,12 +97,6 @@ jobs:
             echo -e "username: $PYPI_USERNAME" >> ~/.pypirc
             echo -e "password: $PYPI_PASSWORD" >> ~/.pypirc
       - run:
-          name: install wheel
-          command: |
-            . env1/bin/activate
-            pip install wheel
-      - run:
           name: create and upload package
           command: |
-            . env1/bin/activate
-            python setup.py sdist bdist_wheel upload
+            python setup.py sdist upload
