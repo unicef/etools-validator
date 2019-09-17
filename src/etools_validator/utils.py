@@ -85,11 +85,11 @@ def check_rigid_related(obj, related):
     for i in comparison_map:
         for field in field_names:
             try:
-                new_value = getattr(i[0], field)
+                new_value = getattr(i[0], field, None)
             except ObjectDoesNotExist:
                 new_value = None
             try:
-                old_value = getattr(i[1], field)
+                old_value = getattr(i[1], field, None)
             except ObjectDoesNotExist:
                 old_value = None
             if not field_comparison(new_value, old_value):
@@ -104,11 +104,11 @@ def check_rigid_fields(obj, fields, old_instance=None, related=False):
     for f_name in fields:
         old_instance = old_instance or obj.old_instance
         try:
-            new_field = getattr(obj, f_name)
+            new_field = getattr(obj, f_name, None)
         except ObjectDoesNotExist:
             new_field = None
         try:
-            old_field = getattr(old_instance, f_name)
+            old_field = getattr(old_instance, f_name, None)
         except ObjectDoesNotExist:
             # in case it's OneToOne related field
             old_field = None
