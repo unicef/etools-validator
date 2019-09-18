@@ -12,7 +12,7 @@ def _int_or_str(c):
 
 
 def _natural_keys(text):
-    return [_int_or_str(c) for c in re.split('(\d+)', text)]  # noqa
+    return [_int_or_str(c) for c in re.split('([0-9]+)', text)]
 
 
 def _create_lists_from_dict_keys(data):
