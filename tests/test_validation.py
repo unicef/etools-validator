@@ -47,14 +47,14 @@ class TestCompleteValidation(TestCase):
     def test_init_old_dict(self):
         """Old parameter cannot be a dict, needs to be model instance"""
         new = DemoModel(name="New")
-        with self.assertRaisesRegexp(TypeError, "needs to be a model"):
+        with self.assertRaisesRegex(TypeError, "needs to be a model"):
             DemoModelValidation(new, old={"name": "Old"})
 
     def test_init_new_dict_invalid_validation_class(self):
         class TestValidation(CompleteValidation):
             VALIDATION_CLASS = "wrong.Model"
 
-        with self.assertRaisesRegexp(TypeError, "instance_class is not"):
+        with self.assertRaisesRegex(TypeError, "instance_class is not"):
             TestValidation({"name": "New"})
 
     def test_init_new_dict_with_id_no_old(self):
@@ -157,7 +157,7 @@ class TestCompleteValidation(TestCase):
         m = DemoModelFactory(name="Old")
         new = {"id": m.pk, "name": "New", "status": DemoModel.STATUS_END}
         v = DemoModelValidation(new, old=m, instance_class=DemoModel)
-        with self.assertRaisesRegexp(TransitionError, "Document is required"):
+        with self.assertRaisesRegex(TransitionError, "Document is required"):
             v.check_transition_conditions(v.transition)
 
     def test_check_transition_conditions(self):
