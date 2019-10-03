@@ -31,6 +31,7 @@ class ValidatorViewMixin(object):
                 k: v for k, v in field.items()
                 if k in nested_related_names
             }
+        nested_related_data["request"] = self.request
         if field.get('id', None):
             try:
                 instance = fieldClass.objects.get(id=field['id'])
