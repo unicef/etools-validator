@@ -15,5 +15,6 @@ class DemoModelPermissions(object):
                 "description": "edit",
                 "status": "edit",
                 "document": "edit",
+                "others": "view",
             }
         }

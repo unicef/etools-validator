@@ -26,6 +26,13 @@ class SpecialModelFactory(factory.django.DjangoModelFactory):
         model = models.SpecialModel
 
 
+class ManyModelFactory(factory.django.DjangoModelFactory):
+    name = fuzzy.FuzzyText(length=50)
+
+    class Meta:
+        model = models.ManyModel
+
+
 class UserFactory(factory.django.DjangoModelFactory):
     username = fuzzy.FuzzyText(length=50)
 

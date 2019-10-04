@@ -146,6 +146,7 @@ class TestCompleteValidation(TestCase):
                 "description": "edit",
                 "status": "edit",
                 "document": "edit",
+                "others": "view",
             }
         })
 

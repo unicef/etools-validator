@@ -98,6 +98,17 @@ class ValidatorViewMixin(object):
 
         old_instance = self.get_object()
         instance = self.get_object()
+
+        old_related_data = []
+        for field in kwargs.get("related_non_serialized_fields", []):
+            rel_field_val = getattr(instance, field, None)
+            prop = f"{field}_old"
+            if rel_field_val is None:
+                val = None
+            else:
+                val = list(rel_field_val.all())
+            old_related_data.append((prop, val))
+
         main_serializer = self.get_serializer(
             instance,
             data=data,
@@ -126,5 +137,8 @@ class ValidatorViewMixin(object):
 
         for k, v in my_relations.items():
             self.up_related_field(main_object, v, k, partial, nested_related_names)
+
+        for field, val in old_related_data:
+            setattr(old_instance, field, val)
 
         return self.get_object(), old_instance, main_serializer
