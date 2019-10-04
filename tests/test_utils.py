@@ -1,10 +1,10 @@
-import pytest
 from unittest import TestCase
 
-from etools_validator import utils
+import pytest
 
 from demo.factories import DemoChildModelFactory, DemoModelFactory
 from demo.sample import models
+from etools_validator import utils
 
 pytestmark = pytest.mark.django_db
 

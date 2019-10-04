@@ -1,7 +1,6 @@
+import factory
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
-
-import factory
 from factory import fuzzy
 
 from demo.sample import models

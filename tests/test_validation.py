@@ -1,15 +1,14 @@
-from django.contrib.contenttypes.models import ContentType
-
-import pytest
 from unittest import TestCase
 
-from etools_validator.exceptions import TransitionError
-from etools_validator.validation import CompleteValidation
+import pytest
+from django.contrib.contenttypes.models import ContentType
 
 from demo.factories import DemoModelFactory, PermissionFactory, UserFactory
 from demo.sample.models import DemoModel, DemoModelNoAuto
 from demo.sample.permissions import DemoModelPermissions
 from demo.sample.validations import DemoModelValidation
+from etools_validator.exceptions import TransitionError
+from etools_validator.validation import CompleteValidation
 
 pytestmark = pytest.mark.django_db
 
