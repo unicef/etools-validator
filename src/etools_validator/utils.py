@@ -125,8 +125,7 @@ def check_rigid_fields(obj, fields, old_instance=None, related=False):
 
 def update_object(obj, kwdict):
     for k, v in kwdict.items():
-        attr = getattr(obj, k, None)
-        if isinstance(v, list) and not isinstance(attr, list):
-            attr.set(v)
+        if isinstance(v, list):
+            getattr(obj, k).set(v)
         else:
             setattr(obj, k, v)
