@@ -178,7 +178,7 @@ class TestCompleteValidation(TestCase):
         self.assertIsNone(v.transition)
 
     def test_transition(self):
-        m = DemoModelFactory(name="Old")
+        m = DemoModelFactory(name="Old", document="random.pdf")
         new = {"id": m.pk, "name": "New", "status": DemoModel.STATUS_END}
         v = DemoModelValidation(new, old=m, instance_class=DemoModel)
         self.assertEqual(v.transition, m.complete)

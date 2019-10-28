@@ -4,7 +4,7 @@ def pend_permission(instance, user):
     return False
 
 
-class DemoModelPermissions(object):
+class DemoModelPermissions:
     def __init__(self, **kwargs):
         """Placeholder"""
 

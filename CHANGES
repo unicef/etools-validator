@@ -1,3 +1,9 @@
+Release 0.4 (in development)
+----------------
+* added support to python 3.7 and 3.8
+* removed support to python 3.6
+
+
 Release 0.3.4
 -------------
 * Add related_no_serialized_fields handling to mixin
