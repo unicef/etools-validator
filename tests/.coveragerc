@@ -1,9 +1,11 @@
 [run]
 branch = true
 source = etools_validator
+omit =  **/__init__.py
+        **/migrations/**
 
 [report]
-fail_under = 90
+fail_under = 94
 ignore_errors = True
 exclude_lines =
    pragma: no cover
