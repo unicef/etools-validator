@@ -71,3 +71,34 @@ class DemoUpdateView(ValidatorViewMixin, UpdateAPIView):
                 context=self.get_serializer_context()
             ).data
         )
+
+
+class DemoUpdateNonSerializedView(ValidatorViewMixin, UpdateAPIView):
+    queryset = DemoModel.objects.all()
+    serializer_class = DemoModelSerializer
+
+    def update(self, request, *args, **kwargs):
+        related_fields = []
+        related_non_serialized_fields = ['others']
+        instance, old_instance, serializer = self.my_update(
+            request,
+            related_fields,
+            related_non_serialized_fields=related_non_serialized_fields,
+            **kwargs
+        )
+
+        validator = DemoModelValidation(
+            instance,
+            old=old_instance,
+            user=request.user
+        )
+
+        if not validator.is_valid:
+            raise ValidationError(validator.errors)
+
+        return Response(
+            DemoModelSerializer(
+                instance,
+                context=self.get_serializer_context()
+            ).data
+        )
