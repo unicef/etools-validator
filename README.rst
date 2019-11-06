@@ -13,6 +13,7 @@ Installation
 ============
 
 .. code-block:: bash
+
    pip install etools-validator
 
 
@@ -20,12 +21,13 @@ Setup
 =====
 
 Add ``validator`` to ``INSTALLED_APPS`` in ``settings.py``
-
 .. code-block:: python
-   INSTALLED_APPS = [
+
+   INSTALLED_APPS = (
        ...
        'etools_validator',
-   ]
+
+   )
 
 
 Usage
@@ -34,6 +36,7 @@ Usage
 Use ``validator`` in views
 
 ..  code-block:: python
+
    from validator.mixins import ValidatorViewMixin
 
    class ExampleView(ValidatorViewMixin, ListCreateAPIView):
@@ -107,5 +110,3 @@ Compatibility Matrix
 --------------------
 
 .. image:: https://travis-matrix-badges.herokuapp.com/repos/unicef/etools-validator/branches/develop
-
-

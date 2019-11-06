@@ -1,6 +1,7 @@
-BUILDDIR?=build
-DJANGO_SETTINGS_MODULE?="demo.settings"
-DEMOPATH=tests/demoproject
+BUILDDIR=build
+BUILD_NUMBER=0
+PYPI_SERVER?=pypi.org
+PYPI_INDEX?=https://${PYPI_SERVER}/simple/
 
 
 help:
@@ -11,7 +12,6 @@ help:
 	@echo '   make lint                        run lint checks                    '
 	@echo '   make test                        run tests                          '
 	@echo '   make develop                     update develop environment         '
-	@echo '   make requirements                generate requirements files from Pipfile'
 	@echo '                                                                       '
 
 
@@ -45,10 +45,3 @@ fullclean:
 	rm -fr .tox
 	rm -f *.sqlite
 	make clean
-
-
-requirements:
-	pipenv lock -r > src/requirements/install.pip
-	pipenv lock -r -d > src/requirements/testing.pip
-	sed -i "" 's/\(.*\)==.*/\1/g' src/requirements/install.pip && sed -i "" '1d' src/requirements/install.pip
-	sed -i "" 's/\(.*\)==.*/\1/g' src/requirements/testing.pip && sed -i "" '1d' src/requirements/testing.pip

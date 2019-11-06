@@ -1,0 +1,5 @@
+Release 0.3.4
+-------------
+* Add related_no_serialized_fields handling to mixin
+* Pass request in context to nested related
+* Standardize setup for libraries

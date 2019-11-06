@@ -21,6 +21,7 @@ class DemoModel(models.Model):
     description = models.TextField(blank=True)
     document = models.FileField(null=True, blank=True)
     status = FSMField(default=STATUS_NEW, choices=STATUS_CHOICES)
+    others = models.ManyToManyField("sample.ManyModel", blank=True)
 
     def permission_structure(self):
         return None
@@ -75,3 +76,7 @@ class SpecialModel(models.Model):
         on_delete=models.CASCADE,
         related_name="special"
     )
+
+
+class ManyModel(models.Model):
+    name = models.CharField(max_length=50)

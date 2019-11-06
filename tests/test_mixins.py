@@ -1,15 +1,14 @@
+from unittest import TestCase
+
+import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import resolve, reverse
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-import pytest
-from unittest import TestCase
-
-from etools_validator.mixins import ValidatorViewMixin
-
-from demo.factories import DemoChildModelFactory, DemoModelFactory, SpecialModelFactory, UserFactory
+from demo.factories import DemoChildModelFactory, DemoModelFactory, ManyModelFactory, SpecialModelFactory, UserFactory
 from demo.sample.models import DemoChildModel, DemoModel, SpecialModel
+from etools_validator.mixins import ValidatorViewMixin
 
 pytestmark = pytest.mark.django_db
 
@@ -126,6 +125,25 @@ class TestValidatorViewMixin(TestCase):
         self.assertEqual(response.data["name"], "New")
         special_updated = SpecialModel.objects.get(pk=special.pk)
         self.assertEqual(special_updated.name, "Updated Special")
+
+    def test_update_non_serialized_update(self):
+        m = DemoModelFactory(name="Old", document="test.txt")
+        self.assertEqual(list(m.others.all()), [])
+        one = ManyModelFactory()
+        response = self._get_response(
+            "put",
+            reverse("sample:update-non-serialized", args=[m.pk]),
+            {
+                "name": "New",
+                "others": [one.pk],
+            },
+            format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], m.pk)
+        self.assertEqual(response.data["name"], "New")
+        m.refresh_from_db()
+        self.assertEqual(list(m.others.all()), [one])
 
     def test_update_children_create(self):
         m = DemoModelFactory(name="Old", document="test.txt")
