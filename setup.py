@@ -43,7 +43,7 @@ setup(
     install_requires=(
         "Django",
         "djangorestframework",
-        "django-fsa",
+        "django-fsm",
     ),
     extras_require={
         'test': (
@@ -63,8 +63,8 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Framework :: Django',
-        'Framework :: Django :: 2.1',
         'Framework :: Django :: 2.2',
+        'Framework :: Django :: 3.0',
         'Intended Audience :: Developers'],
     scripts=[],
 )
