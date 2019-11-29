@@ -41,7 +41,7 @@ setup(
     packages=find_packages(where='src'),
     include_package_data=True,
     install_requires=(
-        "django",
+        "Django",
         "djangorestframework",
         "django-fsa",
     ),
