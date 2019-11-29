@@ -41,9 +41,9 @@ setup(
     packages=find_packages(where='src'),
     include_package_data=True,
     install_requires=(
-        "django",
+        "Django",
         "djangorestframework",
-        "django-fsm",
+        "django-fsa",
     ),
     extras_require={
         'test': (
@@ -60,8 +60,8 @@ setup(
     platforms=['any'],
     classifiers=[
         'Environment :: Web Environment',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Framework :: Django',
         'Framework :: Django :: 2.1',
         'Framework :: Django :: 2.2',

@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 from .parsers import parse_multipart_data
 
 
-class ValidatorViewMixin(object):
+class ValidatorViewMixin:
     def _parse_data(self, request):
         dt_cp = request.data
         for k in dt_cp:

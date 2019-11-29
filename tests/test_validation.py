@@ -178,10 +178,13 @@ class TestCompleteValidation(TestCase):
         self.assertIsNone(v.transition)
 
     def test_transition(self):
-        m = DemoModelFactory(name="Old")
+        m = DemoModelFactory(name="Old", document="random.pdf")
         new = {"id": m.pk, "name": "New", "status": DemoModel.STATUS_END}
         v = DemoModelValidation(new, old=m, instance_class=DemoModel)
-        self.assertEqual(v.transition, m.complete)
+        self.assertEqual(
+            v.transition.__wrapped__.__name__,
+            m.complete.__name__,
+        )
 
     def test_check_transition_permission_empty(self):
         v = DemoModelValidation({"name": "New"}, instance_class=DemoModel)
