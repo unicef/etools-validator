@@ -1,7 +1,7 @@
 from itertools import chain
 
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.db.models import ObjectDoesNotExist
+from django.db.models import ObjectDoesNotExist, Model
 from django.db.models.fields.files import FieldFile
 
 
@@ -65,6 +65,30 @@ def field_comparison(f1, f2):
     return True
 
 
+def check_rigid_model_instance(old_obj, new_obj):
+    if not isinstance(old_obj, Model) or not isinstance(new_obj, Model):
+        # one of instances can be None, in this case we don't need to check all fields
+        return old_obj == new_obj
+
+    field_names = get_all_field_names(old_obj)
+
+    for field in field_names:
+        try:
+            new_value = getattr(old_obj, field, None)
+        except ObjectDoesNotExist:
+            new_value = None
+        try:
+            old_value = getattr(new_obj, field, None)
+        except ObjectDoesNotExist:
+            old_value = None
+        if not field_comparison(new_value, old_value):
+            return False
+
+        # there is no check for instance class so we don't go deeper than 1 level
+
+    return True
+
+
 def check_rigid_related(obj, related):
     current_related = list(getattr(obj, related).filter())
     old_related = getattr(obj.old_instance, '{}_old'.format(related), None)
@@ -76,23 +100,13 @@ def check_rigid_related(obj, related):
     if len(current_related) == 0:
         return True
 
-    field_names = get_all_field_names(current_related[0])
     current_related.sort(key=lambda x: x.id)
     old_related.sort(key=lambda x: x.id)
     comparison_map = zip(current_related, old_related)
     # check if any field on the related model was changed
-    for i in comparison_map:
-        for field in field_names:
-            try:
-                new_value = getattr(i[0], field, None)
-            except ObjectDoesNotExist:
-                new_value = None
-            try:
-                old_value = getattr(i[1], field, None)
-            except ObjectDoesNotExist:
-                old_value = None
-            if not field_comparison(new_value, old_value):
-                return False
+    for old_obj, new_obj in comparison_map:
+        if not check_rigid_model_instance(old_obj, new_obj):
+            return False
     return True
 
 
@@ -116,6 +130,10 @@ def check_rigid_fields(obj, fields, old_instance=None, related=False):
             if related:
                 if not check_rigid_related(obj, f_name):
                     return False, f_name
+
+        elif isinstance(old_field, Model) or isinstance(new_field, Model):
+            if not check_rigid_model_instance(old_field, new_field):
+                return False, f_name
 
         elif not field_comparison(new_field, old_field):
             return False, f_name
