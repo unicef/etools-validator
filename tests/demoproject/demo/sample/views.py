@@ -42,11 +42,15 @@ class DemoCreateView(ValidatorViewMixin, CreateAPIView):
 class DemoUpdateView(ValidatorViewMixin, UpdateAPIView):
     queryset = DemoModel.objects.all()
     serializer_class = DemoModelSerializer
+    validation_class = DemoModelValidation
 
     SERIALIZER_MAP = {
         "children": DemoChildModelSerializer,
         "special": SpecialModelSerializer,
     }
+
+    def get_validation_class(self):
+        return self.validation_class
 
     def update(self, request, *args, **kwargs):
         related_fields = ['children', 'special']
@@ -56,7 +60,7 @@ class DemoUpdateView(ValidatorViewMixin, UpdateAPIView):
             **kwargs
         )
 
-        validator = DemoModelValidation(
+        validator = self.get_validation_class()(
             instance,
             old=old_instance,
             user=request.user

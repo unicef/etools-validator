@@ -1,8 +1,7 @@
-from itertools import chain
-
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.db.models import ObjectDoesNotExist, Model
+from django.db.models import Model, ObjectDoesNotExist
 from django.db.models.fields.files import FieldFile
+from itertools import chain
 
 
 def get_all_field_names(model):
