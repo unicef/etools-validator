@@ -141,11 +141,12 @@ class TestCompleteValidation(TestCase):
         v.PERMISSIONS_CLASS = DemoModelPermissions
         self.assertEqual(v.get_permissions(None), {
             "edit": {
-                "name": "edit",
-                "description": "edit",
-                "status": "edit",
-                "document": "edit",
-                "others": "view",
+                "name": True,
+                "description": True,
+                "status": True,
+                "document": True,
+                "others": False,
+                "special": True,
             }
         })
 
