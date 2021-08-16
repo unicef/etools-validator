@@ -246,7 +246,7 @@ class CompleteValidation(object):
         return not len(errors), errors
 
     def map_errors(self, errors):
-        return [self.VALID_ERRORS.get(error, error) for error in errors]
+        return [self.VALID_ERRORS.get(error, error) if isinstance(error, str) else error for error in errors]
 
     def _apply_current_side_effects(self):
         # check if there was any transition so far:
