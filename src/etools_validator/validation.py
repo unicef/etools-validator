@@ -1,11 +1,10 @@
 import copy
 import logging
-
 from django.apps import apps
 from django.utils.functional import cached_property
 from django_fsm import can_proceed, get_all_FIELD_transitions, has_transition_perm
 
-from .decorators import error_string, state_error_string, transition_error_string
+from .decorators import error_data, state_error_data, transition_error_data
 from .utils import update_object
 
 logger = logging.getLogger(__name__)
@@ -107,7 +106,7 @@ class CompleteValidation(object):
     def transition(self):
         return self._get_fsm_defined_transitions(self.old_status, self.new_status)
 
-    @transition_error_string
+    @transition_error_data
     def transitional_validation(self):
         # set old status to get proper transitions
         self.new.status = self.old.status
@@ -133,7 +132,7 @@ class CompleteValidation(object):
         self.new.status = self.new_status
         return conditions_check and permissions_check
 
-    @state_error_string
+    @state_error_data
     def state_valid(self):
         if not self.basic_validation[0]:
             return self.basic_validation
@@ -161,7 +160,7 @@ class CompleteValidation(object):
             if transition.source == source and target in transition.target:
                 return getattr(self.new, transition.method.__name__)
 
-    @transition_error_string
+    @transition_error_data
     def auto_transition_validation(self, potential_transition):
 
         result = self.check_transition_conditions(potential_transition)
@@ -240,14 +239,14 @@ class CompleteValidation(object):
         self.permissions = self.get_permissions(self.new)
         errors = []
         for validation_function in self.BASIC_VALIDATIONS:
-            a = error_string(validation_function)(self.new)
+            a = error_data(validation_function)(self.new)
             errors += a[1]
         delattr(self.new, 'old_instance')
         self.permissions = None
         return not len(errors), errors
 
     def map_errors(self, errors):
-        return [self.VALID_ERRORS.get(error, error) for error in errors]
+        return [self.VALID_ERRORS.get(error, error) if isinstance(error, str) else error for error in errors]
 
     def _apply_current_side_effects(self):
         # check if there was any transition so far:

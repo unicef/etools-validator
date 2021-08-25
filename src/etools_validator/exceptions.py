@@ -25,3 +25,39 @@ class StateValidationError(_BaseStateError):
 class BasicValidationError(BaseException):
     def __init__(self, message=''):
         super(BasicValidationError, self).__init__(message)
+
+
+class BaseDetailedError(BaseException):
+    """
+    Base class for detailed validation exceptions.
+    It contains full information about error: code, description and extra data
+    """
+
+    def __init__(self, code: str, description: str, extra: dict = None):
+        super().__init__(self)
+        self.code = code
+        self.description = description
+        self.extra = extra or {}
+
+    def __str__(self):
+        return self.description
+
+    @property
+    def details(self):
+        return {
+            'code': self.code,
+            'description': self.description,
+            'extra': self.extra,
+        }
+
+
+class DetailedBasicValidationError(BaseDetailedError):
+    pass
+
+
+class DetailedTransitionError(BaseDetailedError):
+    pass
+
+
+class DetailedStateValidationError(BaseDetailedError):
+    pass

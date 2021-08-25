@@ -1,4 +1,5 @@
 from unittest import TestCase
+from unittest.mock import patch
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -8,6 +9,8 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 
 from demo.factories import DemoChildModelFactory, DemoModelFactory, ManyModelFactory, SpecialModelFactory, UserFactory
 from demo.sample.models import DemoChildModel, DemoModel, SpecialModel
+from demo.sample.permissions import DemoModelPermissions
+from demo.sample.validations import ProtectedDemoModelValidation
 from etools_validator.mixins import ValidatorViewMixin
 
 pytestmark = pytest.mark.django_db
@@ -121,10 +124,54 @@ class TestValidatorViewMixin(TestCase):
             format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["special"]["name"], "Updated Special")
         self.assertEqual(response.data["id"], m.pk)
         self.assertEqual(response.data["name"], "New")
         special_updated = SpecialModel.objects.get(pk=special.pk)
         self.assertEqual(special_updated.name, "Updated Special")
+
+    @patch('demo.sample.views.DemoUpdateView.get_validation_class', return_value=ProtectedDemoModelValidation)
+    def test_update_special_update_with_permission_class(self, _validation_mock):
+        m = DemoModelFactory(name="Old", document="test.txt")
+        special = SpecialModelFactory(demo=m, name="Old Special")
+        response = self._get_response(
+            "put", reverse("sample:update", args=[m.pk]),
+            {"name": "New", "special": {"id": special.pk, "name": "Updated Special"}},
+            format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["special"]["name"], "Updated Special")
+
+    @patch('demo.sample.views.DemoUpdateView.get_validation_class')
+    def test_update_special_permissions_protected(self, validation_mock):
+        class SpecialPermissions(DemoModelPermissions):
+            def get_permissions(self):
+                permissions = super().get_permissions()
+                permissions['edit']['special'] = False
+                return permissions
+
+        class SpecialValidation(ProtectedDemoModelValidation):
+            PERMISSIONS_CLASS = SpecialPermissions
+
+        validation_mock.return_value = SpecialValidation
+
+        m = DemoModelFactory(name="Old", document="test.txt")
+        special = SpecialModelFactory(demo=m, name="Old Special")
+        response = self._get_response(
+            "put",
+            reverse("sample:update", args=[m.pk]),
+            {
+                "name": "New",
+                "special": {
+                    "id": special.pk,
+                    "name": "Updated Special"
+                }
+            },
+            format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Cannot change fields while in new: special', response.data)
 
     def test_update_non_serialized_update(self):
         m = DemoModelFactory(name="Old", document="test.txt")

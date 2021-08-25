@@ -4,17 +4,18 @@ def pend_permission(instance, user):
     return False
 
 
-class DemoModelPermissions(object):
+class DemoModelPermissions:
     def __init__(self, **kwargs):
         """Placeholder"""
 
     def get_permissions(self):
         return {
             "edit": {
-                "name": "edit",
-                "description": "edit",
-                "status": "edit",
-                "document": "edit",
-                "others": "view",
+                "name": True,
+                "description": True,
+                "status": True,
+                "document": True,
+                "others": False,
+                "special": True,
             }
         }

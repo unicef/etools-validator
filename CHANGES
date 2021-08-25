@@ -1,3 +1,15 @@
+Release 0.5 (in development)
+----------------
+# added ability to provide detailed validation error information using DetailedError exceptions
+
+Release 0.4
+----------------
+* added support to python 3.7, 3.8 and 3.9
+* added support to django 3.0, 3.1 and 3.2
+* removed support to python 3.6
+* removed support to django 2.1
+
+
 Release 0.3.4
 -------------
 * Add related_no_serialized_fields handling to mixin
