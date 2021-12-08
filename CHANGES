@@ -1,6 +1,8 @@
 Release 0.5 (in development)
 ----------------
-# added ability to provide detailed validation error information using DetailedError exceptions
+* added ability to provide detailed validation error information using DetailedError exceptions
+* added support to django 4.0
+
 
 Release 0.4
 ----------------
