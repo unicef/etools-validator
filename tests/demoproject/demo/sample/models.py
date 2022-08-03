@@ -1,4 +1,5 @@
 from django.db import models
+
 from django_fsm import FSMField, transition
 
 from etools_validator.exceptions import TransitionError

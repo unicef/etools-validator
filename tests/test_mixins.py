@@ -1,17 +1,19 @@
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import resolve, reverse
+
+from rest_framework import status
+from rest_framework.test import APIRequestFactory, force_authenticate
+
+import pytest
 from unittest import TestCase
 from unittest.mock import patch
 
-import pytest
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.urls import resolve, reverse
-from rest_framework import status
-from rest_framework.test import APIRequestFactory, force_authenticate
+from etools_validator.mixins import ValidatorViewMixin
 
 from demo.factories import DemoChildModelFactory, DemoModelFactory, ManyModelFactory, SpecialModelFactory, UserFactory
 from demo.sample.models import DemoChildModel, DemoModel, SpecialModel
 from demo.sample.permissions import DemoModelPermissions
 from demo.sample.validations import ProtectedDemoModelValidation
-from etools_validator.mixins import ValidatorViewMixin
 
 pytestmark = pytest.mark.django_db
 
