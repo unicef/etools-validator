@@ -57,9 +57,9 @@ class TestCheckEditableFields(TestCase):
         """Children attribute on demo models do not equal each other
         Results in not editable
         """
-        m = models.DemoModel()
+        m = models.DemoModel.objects.create()
         fields = ["children"]
-        m.old_instance = models.DemoModel()
+        m.old_instance = models.DemoModel.objects.create()
         self.assertTrue(hasattr(m, "old_instance"))
         editable, res = utils.check_editable_fields(m, fields)
         self.assertFalse(editable)
@@ -143,17 +143,17 @@ class TestCheckRigidRelated(TestCase):
         """Old instance attribute does not have the related field set
         as <field>_old
         """
-        parent = models.DemoModel(name="parent")
-        models.DemoChildModel(name="child", parent=parent)
-        new = models.DemoModel(name="new parent")
+        parent = models.DemoModel.objects.create(name="parent")
+        models.DemoChildModel.objects.create(name="child", parent=parent)
+        new = models.DemoModel.objects.create(name="new parent")
         new.old_instance = parent
         self.assertTrue(utils.check_rigid_related(new, "children"))
 
     def test_related_different(self):
         """Count on old related field differs with current model"""
-        parent1 = models.DemoModel(name="parent1")
-        child1 = models.DemoChildModel(name="child1", parent=parent1)
-        parent2 = models.DemoModel(name="parent2")
+        parent1 = models.DemoModel.objects.create(name="parent1")
+        child1 = models.DemoChildModel.objects.create(name="child1", parent=parent1)
+        parent2 = models.DemoModel.objects.create(name="parent2")
         parent1.children_old = [child1]
         parent2.old_instance = parent1
         self.assertFalse(len(parent2.children.filter()))
@@ -186,9 +186,9 @@ class TestCheckRigidRelated(TestCase):
 
     def test_related_current_empty(self):
         """Count on old related field matches, and current is empty"""
-        parent1 = models.DemoModel(name="parent1")
-        models.DemoChildModel(name="child1", parent=parent1)
-        parent2 = models.DemoModel(name="parent2")
+        parent1 = models.DemoModel.objects.create(name="parent1")
+        models.DemoChildModel.objects.create(name="child1", parent=parent1)
+        parent2 = models.DemoModel.objects.create(name="parent2")
         parent1.children_old = []
         parent2.old_instance = parent1
         self.assertTrue(utils.check_rigid_related(parent2, "children"))
