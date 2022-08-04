@@ -1,7 +1,9 @@
 import copy
 import logging
+
 from django.apps import apps
 from django.utils.functional import cached_property
+
 from django_fsm import can_proceed, get_all_FIELD_transitions, has_transition_perm
 
 from .decorators import error_data, state_error_data, transition_error_data
