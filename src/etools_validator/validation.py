@@ -212,6 +212,7 @@ class CompleteValidation(object):
                 return False
 
             # if all good run all the autoupdates on that status
+            # TODO: collect them and execute them only if the end transaction gets committed
             for function in auto_update_functions:
                 function(self.new, old_instance=self.old, user=self.user)
             return True
@@ -251,6 +252,10 @@ class CompleteValidation(object):
         return [self.VALID_ERRORS.get(error, error) if isinstance(error, str) else error for error in errors]
 
     def _apply_current_side_effects(self):
+        # if there was no old_status it means there was no previous instance, there's no need gather side effects
+        # as they should only be called when something gets transitioned
+        if not self.old_status:
+            return
         # check if there was any transition so far:
         if self.old_status == self.new_status:
             return
@@ -264,6 +269,7 @@ class CompleteValidation(object):
                 self.new_status,
                 []
             )
+            # TODO: Collect them and execute them only if the transaction gets commited
             for side_effect_function in transition_side_effects:
                 side_effect_function(
                     self.new,
@@ -293,6 +299,8 @@ class CompleteValidation(object):
             self._apply_current_side_effects()
 
             if self.make_auto_transitions():
+                # have a flag, there should be an ability to revert back and not save contingent on the flag
+                # it's misleading to save a record while calling is_valid
                 self.new.save()
         return True, []
 
