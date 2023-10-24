@@ -252,7 +252,6 @@ class CompleteValidation(object):
         return [self.VALID_ERRORS.get(error, error) if isinstance(error, str) else error for error in errors]
 
     def _apply_current_side_effects(self):
-        print("apply_current_side_effects", self.old_status, self.new_status)
         # if there was no old_status it means there was no previous instance, there's no need gather side effects
         # as they should only be called when something gets transitioned
         if not self.old_status:
